@@ -11,10 +11,12 @@ function wilson() {
 
 wilson.prototype.transport = function (transport, opts) {
   this._transport = transport(this, opts)
+  return this
 }
 
 wilson.prototype.receive = function (handler) {
   this._receiver = handler
+  return this
 }
 
 wilson.prototype.received = function(message, done) {
