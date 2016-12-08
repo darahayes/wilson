@@ -1,23 +1,32 @@
-const pino = require('pino')
+'use strict'
 
-function wilson() {
-  if (!(this instanceof wilson)) {
-    return new wilson()
-  }
-  this._receiver = null
-  this._transport = null
-  this.logger = pino()
+const Pino = require('pino')
+
+const defaults = {
+  tag: 'untagged'
 }
 
-wilson.prototype.transport = function (transport, opts) {
+const Wilson = module.exports = function (config) {
+  if (!(this instanceof Wilson)) {
+    return new Wilson(config)
+  }
+
+  this.logger = Pino()
+  this.config = Object.assign({}, defaults, config)
+
+  this._receiver = null
+  this._transport = null
+}
+
+Wilson.prototype.transport = function (transport, opts) {
   this._transport = transport(this, opts)
 }
 
-wilson.prototype.receive = function (handler) {
+Wilson.prototype.receive = function (handler) {
   this._receiver = handler
 }
 
-wilson.prototype.received = function(message, done) {
+Wilson.prototype.received = function(message, done) {
   this.logger.info({info: 'message received', message: message})
   if (this._receiver) {
     this._receiver(message, this._transport.dispatch, done)
@@ -27,14 +36,12 @@ wilson.prototype.received = function(message, done) {
   }
 }
 
-wilson.prototype.dispatch = function (key, msg) {
+Wilson.prototype.dispatch = function (key, msg) {
   this._transport.dispatch(key, msg)
 }
 
-wilson.prototype.start = function (done) {
+Wilson.prototype.start = function (done) {
   done = done || function() {}
   this._transport.start(done)
   return this
 }
-
-module.exports = wilson
