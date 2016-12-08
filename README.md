@@ -12,9 +12,9 @@ const Service = require('./service')
 const Transport = require('wilson-amqp')
 const Wilson = require('wilson')
 
-Wilson({tag: Config.tag})
-  .transport(Ampq, Config.transport)
-  .receive(Service)
+Wilson(Config)
+  .transport(Transport)
+  .service(Service)
   .start((err) => {
     if (err) {
       console.log(err)
