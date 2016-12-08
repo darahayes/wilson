@@ -31,7 +31,7 @@ Wilson.prototype.receive = function (service, opts) {
 
   service(this.config, (err, receiver) => {
     if (!err) { // log and die?
-      this._receiver = handler
+      this._receiver = receiver
     }
   })
   
