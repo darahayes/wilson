@@ -20,10 +20,12 @@ const Wilson = module.exports = function (config) {
 
 Wilson.prototype.transport = function (transport, opts) {
   this._transport = transport(this, opts)
+  return this
 }
 
 Wilson.prototype.receive = function (handler) {
   this._receiver = handler
+  return this
 }
 
 Wilson.prototype.received = function(message, done) {
