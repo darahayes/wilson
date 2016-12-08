@@ -24,14 +24,14 @@ const Wilson = module.exports = function (config) {
 }
 
 Wilson.prototype.transport = function (transport, opts) {
-  this.config = Object.assign({}, this.config, {transport: opts})
+  this.config = Object.assign({}, {transport: opts}, this.config)
   this._transport = transport(this, this.config.transport)
   return this
 }
 
 
 Wilson.prototype.service = function (service, opts) {
-  this.config = Object.assign({}, this.config, {service: opts})
+  this.config = Object.assign({}, {service: opts}, this.config)
   this._service = service
   return this
 }
@@ -49,7 +49,6 @@ Wilson.prototype.received = function (message, done) {
 Wilson.prototype.start = function (done) {
   this._service(this.config.service, (err, receiver) => {
     if (err) return done(err, null)
-
     this._receiver = receiver
     this._transport.start(done)
   })
