@@ -4,7 +4,9 @@ const HyperId = require('hyperid')
 const Pino = require('pino')
 
 const defaults = {
-  tag: 'untagged'
+  tag: 'untagged',
+  transport: {},
+  service: {}
 }
 
 const Wilson = module.exports = function (config) {
