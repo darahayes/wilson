@@ -1,30 +1,29 @@
-# thingy
-thingy is just a placeholder name...
+# wilson
 
 ## Usage
 
 ```js
 'use strict'
-const thingy = require('thingy')()
-const amqp = require('thingy-amqp')
+const wilson = require('wilson')()
+const amqp = require('wilson-amqp')
 
 let options = {
   url: 'amqp://localhost:5672',
   q: 'node_worker',
 }
 
-thingy.transport(amqp, options)
+wilson.transport(amqp, options)
 
-thingy.receive((msg, dispatch, done) => {
-  dispatch('some.queue', {'msg': 'hello from the thingy'})
+wilson.receive((msg, dispatch, done) => {
+  dispatch('some.queue', {'msg': 'hello from wilson'})
   done()
 })
 
-thingy.start((err) => {
+wilson.start((err) => {
   if (err) {
     throw err
   }
-  console.log('thingy started')
+  console.log('wilson started')
 })
 
 ```

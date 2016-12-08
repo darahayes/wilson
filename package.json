@@ -1,5 +1,5 @@
 {
-  "name": "thingy",
+  "name": "wilson",
   "version": "0.0.1",
   "description": "",
   "main": "index.js",
@@ -8,7 +8,7 @@
   },
   "keywords": [],
   "author": "Dara Hayes",
-  "license": "MIT",
+  "license": "",
   "dependencies": {
     "pino": "^3.0.5"
   }
