@@ -16,6 +16,7 @@ const Wilson = module.exports = function (config) {
   this.log = Pino()
   this.config = Object.assign({}, defaults, config)
 
+  this._service = null
   this._receiver = null
   this._transport = null
 }
@@ -26,20 +27,15 @@ Wilson.prototype.transport = function (transport, opts) {
   return this
 }
 
-Wilson.prototype.receive = function (service, opts) {
-  this.config = Object.assign({}, this.config, {service: opts})
 
-  service(this.config, (err, receiver) => {
-    if (!err) { // log and die?
-      this._receiver = receiver
-    }
-  })
-  
+Wilson.prototype.service = function (service, opts) {
+  this.config = Object.assign({}, this.config, {service: opts})
+  this._service = service
   return this
 }
 
 Wilson.prototype.received = function (message, done) {
-  this.logger.info({info: 'message received', message: message})
+  this.log.info({info: 'message received', message: message})
   if (this._receiver) {
     this._receiver(message, this._transport.dispatch, done)
   }
@@ -48,12 +44,15 @@ Wilson.prototype.received = function (message, done) {
   }
 }
 
-Wilson.prototype.dispatch = function (key, msg) {
-  this._transport.dispatch(key, msg)
+Wilson.prototype.start = function (done) {
+  this._service(this.config, (err, receiver) => {
+    if (err) return done(err, null)
+
+    this._receiver = receiver
+    this._transport.start(done)    
+  })
 }
 
-Wilson.prototype.start = function (done) {
-  done = done || function() {}
-  this._transport.start(done)
-  return this
+Wilson.prototype.dispatch = function (key, msg) {
+  this._transport.dispatch(key, msg)
 }
