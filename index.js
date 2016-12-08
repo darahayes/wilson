@@ -1,5 +1,6 @@
 'use strict'
 
+const HyperId = require('hyperid')
 const Pino = require('pino')
 
 const defaults = {
@@ -11,7 +12,8 @@ const Wilson = module.exports = function (config) {
     return new Wilson(config)
   }
 
-  this.logger = Pino()
+  this.id = HyperId().uuid
+  this.log = Pino()
   this.config = Object.assign({}, defaults, config)
 
   this._receiver = null
@@ -19,16 +21,24 @@ const Wilson = module.exports = function (config) {
 }
 
 Wilson.prototype.transport = function (transport, opts) {
-  this._transport = transport(this, opts)
+  this.config = Object.assign({}, this.config, {transport: opts})
+  this._transport = transport(this, this.config)
   return this
 }
 
-Wilson.prototype.receive = function (handler) {
-  this._receiver = handler
+Wilson.prototype.receive = function (service, opts) {
+  this.config = Object.assign({}, this.config, {service: opts})
+
+  service(this.config, (err, receiver) => {
+    if (!err) { // log and die?
+      this._receiver = handler
+    }
+  })
+  
   return this
 }
 
-Wilson.prototype.received = function(message, done) {
+Wilson.prototype.received = function (message, done) {
   this.logger.info({info: 'message received', message: message})
   if (this._receiver) {
     this._receiver(message, this._transport.dispatch, done)
